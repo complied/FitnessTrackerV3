@@ -1,13 +1,12 @@
-#ifndef Utils_DisplayMenu
-#define Utils_DisplayMenu
+#ifndef DISPLAY_MENU_H
+#define DISPLAY_MENU_H
 
-// Included all the necesary libraries
-#include <iostream>
-using namespace std;
-#include <iomanip>
+#include <string>
 
-namespace displayMenu
-{
-    void displayMenu(); // defined function in the hpp file!
-}
-# endif
+class DisplayMenu {
+public:
+    // Show the main menu
+    void showMainMenu() const;
+};
+
+#endif // DISPLAY_MENU_H
