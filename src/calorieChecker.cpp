@@ -1,4 +1,4 @@
-#include "../include/calorieChecker.h"
+/*#include "../include/calorieChecker.h"
 #include <fstream>
 #include <limits>
 #include <cstring>
@@ -183,3 +183,4 @@ namespace calorieChecker {
     }
 
 }
+*/

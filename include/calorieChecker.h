@@ -1,4 +1,4 @@
-#ifndef Utils_calorieChecker
+/*#ifndef Utils_calorieChecker
 #define Utils_calorieChecker
 
 // Included all the necesary libraries
@@ -35,3 +35,4 @@ namespace calorieChecker {
 #endif // CALORIE_CHECKER_H
 
 
+*/

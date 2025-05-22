@@ -13,7 +13,7 @@ bool WorkoutLog::isValidDate(const string& date) const {
 
     string year = date.substr(0, 4);
     string month = date.substr(5, 2);
-    string day = date.gsubstr(8, 2);
+    string day = date.substr(8, 2);  // ✅ FIXED TYPO here
 
     for (char ch : year + month + day) {
         if (!isdigit(ch)) return false;
@@ -32,12 +32,10 @@ bool WorkoutLog::isValidDate(const string& date) const {
 void WorkoutLog::logWorkout() {
     char choice = 'y';
 
-    // Loop until user finishes or reaches max - in this case 5
     while ((choice == 'y' || choice == 'Y') && workouts.size() < MAX_WORKOUTS) {
-        shared_ptr<Workout> w = createWorkoutFromInput(); // handles user input & object creation
+        shared_ptr<Workout> w = createWorkoutFromInput();
         workouts.push_back(w);
 
-        // Ask if user wants to add more
         cout << setw(10) << "" << "Log another workout? (y/n): ";
         cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -46,16 +44,13 @@ void WorkoutLog::logWorkout() {
     printLeaderboard();
 }
 
-// Creates a specific type of workout based on user input
+// Dynamically create a specific type of workout based on user input
 shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
-    string type;
-    string name;
-    string date;
+    string type, name, date;
     int duration = 0;
 
-    // Ask for workout type
     while (true) {
-        cout << setw(10) << "" << "Please choose workout type [Runnin] [Swimming] [Biking] ): ";
+        cout << setw(10) << "" << "Please choose workout type [Running / Swimming / Biking]: ";
         cin >> type;
 
         if (type == "Running" || type == "Swimming" || type == "Biking") {
@@ -67,11 +62,9 @@ shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    // Get workout name
     cout << setw(10) << "" << "Enter workout name: ";
     getline(cin, name);
 
-    // Validate date
     do {
         cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
         getline(cin, date);
@@ -80,7 +73,6 @@ shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
         }
     } while (!isValidDate(date));
 
-    // Validate duration
     while (true) {
         cout << setw(10) << "" << "Enter duration in minutes: ";
         cin >> duration;
@@ -95,7 +87,6 @@ shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
         }
     }
 
-    // Construct correct workout type
     if (type == "Running") {
         return make_shared<Running>(name, date, duration);
     } else if (type == "Swimming") {
@@ -105,17 +96,16 @@ shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
     }
 }
 
-// Displays all workouts sorted by calories burned
+// Sort and display leaderboard
 void WorkoutLog::printLeaderboard() const {
     if (workouts.empty()) {
         cout << setw(10) << "" << "No workouts to display.\n";
         return;
     }
 
-    // Sort workouts in descending order by calories
     vector<shared_ptr<Workout>> sorted = workouts;
     sort(sorted.begin(), sorted.end(), [](const shared_ptr<Workout>& a, const shared_ptr<Workout>& b) {
-        return a->calculateCalories(60) > b->calculateCalories(60); // Assuming 60kg user
+        return a->calculateCalories(60) > b->calculateCalories(60);
     });
 
     cout << setw(10) << "" << setfill('-') << setw(45) << "-" << setfill(' ') << endl;
@@ -123,7 +113,7 @@ void WorkoutLog::printLeaderboard() const {
 
     for (const auto& w : sorted) {
         cout << setw(10) << "";
-        w->show();  // Polymorphic display
+        w->show();
         cout << setw(10) << "" << "Calories burned: "
              << fixed << setprecision(2) << w->calculateCalories(60) << " KCal\n\n";
     }

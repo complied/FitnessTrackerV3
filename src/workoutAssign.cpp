@@ -1,4 +1,4 @@
-#include "../include/workoutAssign.h"  // allows the function
+/*#include "../include/workoutAssign.h"  // allows the function
 #include "../include/workoutLogger.h" // Including workoutLogger to access activities and durations
 
 using namespace std;
@@ -47,3 +47,4 @@ namespace workoutManager {
     }
 
 }
+*/
