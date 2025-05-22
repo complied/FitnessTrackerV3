@@ -3,65 +3,51 @@
 //  Created by Subigya Parajuli on 2/10/25.
 //
 
+
 #include <iostream>
 #include <iomanip>
-#include <limits>  // for numeric_limits
+#include <limits>
+#include "include/workoutLogger.h"
+
 using namespace std;
 
-#include "include/DisplayMenu.h"
-#include "include/calorieChecker.h"
-#include "include/workoutReccomendation.h"
-#include "include/workoutLogger.h"
-#include "include/workoutAssign.h"
-#include "include/fileManager.h"
-
-// ****** Updated All these: removed argument interface for logWorkout and adjusted assignment call ******
-
-int main(int argc, const char * argv[]) {
+int main() {
     int choice;
 
-    while (true) { // Loop until the user chooses to exit
-        displayMenu::displayMenu(); // Function calling in main - now works!
-
-        cout << "Enter your choice: ";
+    while (true) {
+        // display menu
+        cout << setw(10) << "" << "====================" << endl;
+        cout << setw(10) << "" << "  FITNESS TRACKER" << endl;
+        cout << setw(10) << "" << "====================" << endl;
+        cout << setw(10) << "" << "1. Log Workout" << endl;
+        cout << setw(10) << "" << "Enter your choice: ";
         cin >> choice;
 
-        // Input validation
+        // clear input if bad
         if (cin.fail()) {
-            cin.clear();  // Clears the error flag
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Clears input buffer
-            cout << "Invalid input! Please Re-Enter a number: ";
-            cin >> choice;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << setw(10) << "" << "Invalid input. Please try again.\n";
+            continue;
         }
 
+        // switch case
         switch (choice) {
-            case 1:
-                calorieChecker::emergencyTracker(); // Emergency tracker using unique_ptr
+            case 1: {
+                // log workouts
+                WorkoutLog log;
+                log.logWorkout();
                 break;
-            case 2:
-                workoutReccomendation::workoutReccomendation(); // Workout Recommender function here now
-                continue;
-            case 3:
-                logWorkout::logWorkout(); // Updated
-                continue;
-            case 4:
-                workoutManager::assignWorkoutToDay(); // connected both - logged workout to workout manager
-                break;
-            case 5:
-                fileManager::readEmergencySessionsFromBinary();
-                break;
-            case 6:
-                cout << "Exiting program. Thank you for using the fitness tracker!" << endl;
-                return 0;
+            }
             default:
-                cout << "Invalid choice! Please enter a number between 1 and 5." << endl;
+                cout << setw(10) << "" << "Invalid choice. Try again.\n";
         }
 
-        cout << setfill(' ') << setw(10) << "" << "Please Press Enter to return to the main menu.";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clears input buffer
-        cin.get(); // Waits for Enter key - Waits for any characters with white spaces for examples enter or return!
+        // pause
+        cout << setw(10) << "" << "Press Enter to return to menu...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.get();
     }
 
     return 0;
 }
-
