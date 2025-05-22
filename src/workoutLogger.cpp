@@ -13,7 +13,7 @@ bool WorkoutLog::isValidDate(const string& date) const {
 
     string year = date.substr(0, 4);
     string month = date.substr(5, 2);
-    string day = date.substr(8, 2);  // ✅ FIXED TYPO here
+    string day = date.substr(8, 2);  //  FIXED TYPO here
 
     for (char ch : year + month + day) {
         if (!isdigit(ch)) return false;
@@ -62,8 +62,9 @@ shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    cout << setw(10) << "" << "Enter workout name: ";
-    getline(cin, name);
+
+    name = type + " Session"; // replaced this - Now users can auto set baed on the deal
+
 
     do {
         cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
