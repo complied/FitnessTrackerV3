@@ -5,7 +5,7 @@
 #ifndef RUNNING_H
 #define RUNNING_H
 
-#include "Workout.h"
+#include "WorkOut.h"
 #include <string>
 #include <iostream>
 #include <iomanip>
