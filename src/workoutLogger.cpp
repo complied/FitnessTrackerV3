@@ -1,127 +1,132 @@
-// workoutLogger.cpp
-#include "../include/workoutLogger.h"
-#include <limits>         // buffer
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include <string>
-#include <unordered_map>  // for seperating and comparing
-#include <map>            // added for multimap sorting
+#include "workoutLogger.h"
+#include <iomanip>      // for formatting
+#include <limits>       // for input validation
+
 using namespace std;
 
-namespace logWorkout {
+// Constructor
+WorkoutLog::WorkoutLog() = default;
 
-// Definitions for the externals declared in the header:
-vector<string> activities;            // creating vector for each activity
-vector<string> dates;                 //                          Date
-vector<double> durations;             //                          durations
-unordered_map<string, double> workoutMap; //                      leaderboard
-
-// basic date check function
-bool isValidDate(string date) {
+// Validates YYYY-MM-DD format
+bool WorkoutLog::isValidDate(const string& date) const {
     if (date.length() != 10 || date[4] != '-' || date[7] != '-') return false;
 
-    string year = date.substr(0, 4);   //  year
-    string month = date.substr(5, 2);  //  month
-    string day = date.substr(8, 2);    //  day
+    string year = date.substr(0, 4);
+    string month = date.substr(5, 2);
+    string day = date.gsubstr(8, 2);
 
-    // checking that all characters are digits
     for (char ch : year + month + day) {
         if (!isdigit(ch)) return false;
     }
+
     int y = stoi(year);
     int m = stoi(month);
     int d = stoi(day);
+
     if (y >= 2026 || m < 1 || m > 12 || d < 1 || d > 31) return false;
+
     return true;
 }
 
-// for reacording workout
-void logWorkout() {
-    char choice = 'y';  //yes
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); //added for new line changes
+// Logs a single workout
+void WorkoutLog::logWorkout() {
+    char choice = 'y';
 
-    // Loop until user opts out or reaches the workout cap
-    while ((choice == 'y' || choice == 'Y') && activities.size() < MAX_WORKOUTS) {
-        cout << setw(10) << ""<< setfill('=') << setw(40) << "" << setfill(' ') << endl;
+    // Loop until user finishes or reaches max - in this case 5
+    while ((choice == 'y' || choice == 'Y') && workouts.size() < MAX_WORKOUTS) {
+        shared_ptr<Workout> w = createWorkoutFromInput(); // handles user input & object creation
+        workouts.push_back(w);
 
-        // workout activity check
-        string activity;
-        do {
-            cout << setw(10) << "" << "Enter workout activity: ";
-            getline(cin, activity);   // used this for spaces
-        } while (activity.empty());
+        // Ask if user wants to add more
+        cout << setw(10) << "" << "Log another workout? (y/n): ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
-        // date validation check
-        string date;
-        do {
-            cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
-            getline(cin, date); // allows space here same thing
+    printLeaderboard();
+}
 
-            if (!isValidDate(date)) {
-                cout << setw(10) << "" << "Invalid format or value. Use YYYY-MM-DD and keep year before 2026.\n";
-            }
-        } while (!isValidDate(date));
+// Creates a specific type of workout based on user input
+shared_ptr<Workout> WorkoutLog::createWorkoutFromInput() {
+    string type;
+    string name;
+    string date;
+    int duration = 0;
 
-        //checking time here
-        double duration; // used double for better input
-        while (true) {
-            cout << setw(10) << "" << "Enter duration (min): ";
-            cin >> duration;
-            if (!cin.fail() && duration > 0) break;
+    // Ask for workout type
+    while (true) {
+        cout << setw(10) << "" << "Please choose workout type [Runnin] [Swimming] [Biking] ): ";
+        cin >> type;
 
-            cin.clear(); // reset error flags
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // discard garbage input
-            cout << setw(10) << "" << "Invalid duration. Try again.\n";
-        }
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard leftover newline
-
-        // Store the inputs in the vector
-        activities.push_back(activity);
-        dates.push_back(date);
-        durations.push_back(duration);
-        workoutMap[date] = duration;  // Insert into map for sorting later
-
-        cout << setw(10) << ""
-             << setfill('=') << setw(40) << ""
-             << setfill(' ') << endl;
-        cout << setw(10) << "" << "Logged workout #" << activities.size() << "!" << endl;
-
-        // If we've reached the maximum allowed workouts, break:
-        if (activities.size() >= MAX_WORKOUTS) {
-            cout << setw(10) << ""<< "Reached maximum of " << MAX_WORKOUTS << " workouts."
-                 << endl;
+        if (type == "Running" || type == "Swimming" || type == "Biking") {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
         }
-
-        //checking again if user wants to log another workout
-        do {
-            cout << setw(10) << "" << "Would you like to Log another workout? (y/n): ";
-            cin >> choice;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear newline
-        } while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N');
+        cout << setw(10) << "" << "Invalid type. Try again.\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    displayLeaderboard();
+    // Get workout name
+    cout << setw(10) << "" << "Enter workout name: ";
+    getline(cin, name);
+
+    // Validate date
+    do {
+        cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
+        getline(cin, date);
+        if (!isValidDate(date)) {
+            cout << setw(10) << "" << "Invalid date format. Try again.\n";
+        }
+    } while (!isValidDate(date));
+
+    // Validate duration
+    while (true) {
+        cout << setw(10) << "" << "Enter duration in minutes: ";
+        cin >> duration;
+
+        if (cin.fail() || duration <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << setw(10) << "" << "Invalid duration. Try again.\n";
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+    }
+
+    // Construct correct workout type
+    if (type == "Running") {
+        return make_shared<Running>(name, date, duration);
+    } else if (type == "Swimming") {
+        return make_shared<Swimming>(name, date, duration);
+    } else {
+        return make_shared<Biking>(name, date, duration);
+    }
 }
 
-// displayLeaderboard: sort by duration and print longest to shortest // just like the student project
-void displayLeaderboard() {
-    cout << setw(10) << "" << setfill('-') << setw(40) << "" << setfill(' ') << endl;
-    cout << setw(10) << "" << "Here's your  Workout Leaderboard (longest to shortest):" << endl;
-
-    multimap<double, string, greater<double>> sortedMap; // duration -> date (descending)
-    for (const auto& entry : workoutMap) {
-        sortedMap.insert({entry.second, entry.first});
+// Displays all workouts sorted by calories burned
+void WorkoutLog::printLeaderboard() const {
+    if (workouts.empty()) {
+        cout << setw(10) << "" << "No workouts to display.\n";
+        return;
     }
 
-    for (const auto& p : sortedMap) {
-        cout << setw(10) << ""
-             << p.second << " : " << p.first << " min"
-             << endl;
+    // Sort workouts in descending order by calories
+    vector<shared_ptr<Workout>> sorted = workouts;
+    sort(sorted.begin(), sorted.end(), [](const shared_ptr<Workout>& a, const shared_ptr<Workout>& b) {
+        return a->calculateCalories(60) > b->calculateCalories(60); // Assuming 60kg user
+    });
+
+    cout << setw(10) << "" << setfill('-') << setw(45) << "-" << setfill(' ') << endl;
+    cout << setw(10) << "" << "Workout Leaderboard (60kg user):" << endl;
+
+    for (const auto& w : sorted) {
+        cout << setw(10) << "";
+        w->show();  // Polymorphic display
+        cout << setw(10) << "" << "Calories burned: "
+             << fixed << setprecision(2) << w->calculateCalories(60) << " KCal\n\n";
     }
 
-    cout << setw(10) << "" << setfill('-') << setw(40) << "" << setfill(' ') << endl;
-}
-
+    cout << setw(10) << "" << setfill('-') << setw(45) << "-" << setfill(' ') << endl;
 }
