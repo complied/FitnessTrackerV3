@@ -1,34 +1,33 @@
-#ifndef Utils_workoutLogger
-#define Utils_workoutLogger
+#ifndef WORKOUTLOGGER_HPP
+#define WORKOUTLOGGER_HPP
 
-// Included all the necesary libraries
 #include <iostream>
-#include <iomanip>
-#include <string>
 #include <vector>
-#include <unordered_map>
+#include <memory>
+#include <string>
+#include <map>
+#include "Workout.h"  // Base abstract class for workouts
 
 using namespace std;
 
-namespace logWorkout {
-    // Cap logging at 5 workouts per session
-    const size_t MAX_WORKOUTS = 5;
+// Class that manages a list of workouts
+class WorkoutLog {
+public:
+    WorkoutLog(); // Constructor
 
-    // Data containers
-    extern vector<string> activities;   // e.g. "Running"
-    extern vector<string> dates;        // e.g. "2025-05-02"
-    extern vector<double> durations;    // minutes logged
-    extern unordered_map<string, double> workoutMap; // date → duration
-
-    // Record workouts (no validation yet)
+    // Logs a workout from user input
     void logWorkout();
 
-    // Show workouts sorted by duration (desc)
-    void displayLeaderboard();
+    // Shows workouts sorted by calories burned
+    void printLeaderboard() const;
 
-    //date validation used here
-    bool isValidDate(string date);
-}
-# endif
+private:
+    static const size_t MAX_WORKOUTS = 5; // Limit for number of workouts
 
+    vector<shared_ptr<Workout>> workouts; //  workout list
 
+    // Checks if date format is valid (YYYY-MM-DD)
+    bool isValidDate(const string& date) const;
+};
+
+#endif // WORKOUTLOGGER_HPP
