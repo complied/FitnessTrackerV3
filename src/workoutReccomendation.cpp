@@ -1,6 +1,7 @@
 #include "workoutReccomendation.h"
 #include <iostream>
 #include <iomanip>
+#include <stdexcept> // for std::invalid_argument
 
 using namespace std;
 
@@ -41,7 +42,7 @@ WorkoutRecommender::WorkoutRecommender() {
         WorkoutDay("HIIT Day", {"Burpee Downs", "Sprint Intervals", "Kettlebell Swings", "Battle Ropes"})
     };
 
-    //  // Updated new workout routines - advanced
+    // Updated new workout routines - advanced
     workoutPlans["Advanced"] = {
         WorkoutDay("Push Day",       {"Barbell Bench Press", "Dips", "Overhead Press", "Incline Dumbbell Press"}),
         WorkoutDay("Pull Day",       {"Weighted Pull-ups", "Bent-over Rows", "Barbell Curls", "Face Pulls"}),
@@ -58,6 +59,10 @@ WorkoutRecommender::WorkoutRecommender() {
 void WorkoutRecommender::recommendPlan(const string& level) const {
     auto it = workoutPlans.find(level);
 
+    // Exception handling: invalid level throws error instead of printing
+    if (it == workoutPlans.end()) {
+        throw invalid_argument("Invalid level. Please enter Beginner, Intermediate, or Advanced.");
+    }
 
     cout << setw(10) << "" << "Workout Plan: " << level << "\n";
     cout << setw(10) << "" << setfill('-') << setw(40) << "-" << setfill(' ') << "\n";
@@ -68,7 +73,7 @@ void WorkoutRecommender::recommendPlan(const string& level) const {
     }
 }
 
-// Prompts the user for a level and runs the recommendation logic
+// gives the user chance for a level and runs the recommendation logic
 void workoutReccomendation() {
     WorkoutRecommender recommender;
     string level;
@@ -76,5 +81,9 @@ void workoutReccomendation() {
     cout << setw(10) << "" << "Enter level [Beginner / Intermediate / Advanced]: ";
     cin >> level;
 
-    recommender.recommendPlan(level);
+    try {
+        recommender.recommendPlan(level);
+    } catch (const invalid_argument& e) {
+        cout << setw(10) << "" << "Error: " << e.what() << "\n";
+    }
 }
