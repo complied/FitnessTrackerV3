@@ -1,91 +1,68 @@
-// Included all the necesary libraries
-/*
-#include "../include/workoutReccomendation.h"
-
+#include "workoutReccomendation.h"
 #include <iostream>
 #include <iomanip>
-#include <string>
+
 using namespace std;
-namespace workoutReccomendation {
-     void workoutReccomendation() {
-          cout << setfill(' ') << setw(10) << ""
-               << setfill('=') << setw(40) << "" << endl;
-          cout << setfill(' ') << setw(10) << ""
-               << "Welcome to the Workout Recommender" << endl;
-          cout << setfill(' ') << setw(10) << ""
-               << setfill('=') << setw(40) << "" << endl;
 
-          cout << setfill(' ') << setw(10) << ""
-               << "Select difficulty level:" << endl;
-          cout << setfill(' ') << setw(10) << "" << "1) Beginner" << endl;
-          cout << setfill(' ') << setw(10) << "" << "2) Moderate" << endl;
-          cout << setfill(' ') << setw(10) << "" << "3) InterMediate" << endl;
-          cout << setfill(' ') << setw(10) << ""
-               << "Enter choice (1-3): ";
+// Constructor for WorkoutDay
+WorkoutDay::WorkoutDay(const string& name, const vector<string>& exercises)
+    : name(name), exercises(exercises) {}
 
-          int choice;
-          cin >> choice;
-          // keep prompting until we get an integer in [1,2,3]
-          while (cin.fail() || choice < 1 || choice > 3) {
-               cin.clear();
-               cin.ignore(numeric_limits<streamsize>::max(), '\n');
-               cout << setfill(' ') << setw(10) << ""
-                    << "Invalid choice! Please enter a number between 1 and 3: ";
-               cin >> choice;
-          }
-          cin.ignore(numeric_limits<streamsize>::max(), '\n'); // fixed the double enter issue.
 
-          Difficulty diff = static_cast<Difficulty>(choice); // different choices based on enum
-
-          static const map<Difficulty, vector<WorkoutDay>> workoutPlans = { // different workout with different vector
-               { Difficulty::Beginner, {
-                         { "Push Day",       {"Push-ups", "Bench Press", "Tricep Dips", "Overhead Press"} },
-                         { "Pull Day",       {"Pull-ups", "Lat Pulldown", "Bicep Curls", "Face Pulls"} },
-                         { "Cardio Day",     {"Running", "Jump Rope", "Cycling", "Burpees"} },
-                         { "Core Day",       {"Plank", "Russian Twists", "Leg Raises", "Mountain Climbers"} },
-                         { "Flexibility Day",{"Yoga Stretches", "Hamstring Stretch", "Quad Stretch", "Shoulder Stretch"} }
-               } },
-               { Difficulty::Moderate, {
-                         { "Push Day", {"Incline Bench Press", "Dumbbell Shoulder Press", "Tricep Dips", "Lateral Raises"} },
-                         { "Pull Day", {"Deadlifts", "Chin-ups", "Bicep Curls", "Seated Row"} },
-                         { "Leg Day",  {"Squats", "Lunges", "Leg Press", "Calf Raises"} },
-                         { "Cardio Day",{"Treadmill Sprints", "Jump Rope", "Rowing Machine", "HIIT Workouts"} },
-                         { "Core Day", {"Hanging Leg Raises", "V-Ups", "Cable Woodchoppers", "Ab Rollout"} },
-                         { "HIIT Day", {"Burpee Downs", "Sprint Intervals", "Kettlebell Swings", "Battle Ropes"} }
-               } },
-               { Difficulty::InterMediate, {
-                         { "Push Day",       {"Barbell Bench Press", "Dips", "Overhead Press", "Incline Dumbbell Press"} },
-                         { "Pull Day",       {"Weighted Pull-ups", "Bent-over Rows", "Barbell Curls", "Face Pulls"} },
-                         { "Leg Day",        {"Front Squats", "Romanian Deadlifts", "Leg Curls", "Standing Calf Raises"} },
-                         { "Cardio Day",     {"Sprint Intervals", "Cycling", "Box Jumps", "Battle Ropes"} },
-                         { "Upper Body",     {"Dumbbell Shoulder Press", "Chest Flys", "Lat Pulldown", "Triceps Extensions"} },
-                         { "Full Body",      {"Power Cleans", "Deadlifts", "Kettlebell Swings", "Farmer's Walk"} },
-                         { "Plyometric Day", {"Jump Squats", "Depth Jumps", "Plyo Push-ups", "Tuck Jumps"} },
-                         { "Mobility Day",   {"Hip Openers", "Thoracic Rotations", "Ankle Mobility", "Band Pull-Aparts"} }
-               } }
-          };
-
-          cout << endl << setfill(' ') << setw(10) << "" << "Your Workout Plan:" << endl;
-          cout << setfill(' ') << setw(10) << "" << setfill('=') << setw(40) << "" << endl;
-
-          const auto& plan = workoutPlans.at(diff); // .at MAP based function - checks for each of the given difficulty
-          int daysToShow = static_cast<int>(plan.size());
-          if (daysToShow > 6) daysToShow = 6;
-
-          for (int i = 0; i < daysToShow; i++) { // increments through each to print a day - 6 days max
-               cout << setfill(' ') << setw(10) << ""
-                    << "Day " << (i + 1) << " - " << plan[i].name << ":" << endl; // Print each exercise for this day specifically
-               for (const auto& exercise : plan[i].exercises) {
-                    cout << setfill(' ') << setw(15) << ""
-                         << "- " << exercise << endl;
-               }
-               cout << setfill(' ') << setw(10) << ""
-                    << setfill('=') << setw(40) << "" << endl;
-          }
-
-          // fixed the double enter issue by moving the pause here
-          cout << setfill(' ') << setw(10) << "" << "Please Press Enter to return to the main menu.";
-          cin.get();
-     }
+// Diplaying the workout day and its exercises
+void WorkoutDay::display(int dayNumber) const {
+    cout << setw(10) << "" << "Day " << dayNumber << ": " << name << "\n";
+    for (const string& ex : exercises) {
+        cout << setw(14) << "" << "- " << ex << "\n";
+    }
+    cout << "\n";
 }
-*/
+
+// Initializes all plans in constructor
+WorkoutRecommender::WorkoutRecommender() {
+    workoutPlans["Beginner"] = {
+        WorkoutDay("Full Body Intro", {"10 min walk", "10 squats", "5 pushups"}),
+        WorkoutDay("Stretch + Core", {"15 min stretching", "10 crunches", "10 leg lifts"}),
+        WorkoutDay("Cardio Light", {"15 min cycling", "5 min jog"})
+    };
+
+    workoutPlans["Intermediate"] = {
+        WorkoutDay("Push Day", {"Bench Press", "Shoulder Press", "Push-ups"}),
+        WorkoutDay("Pull Day", {"Deadlift", "Pull-ups", "Barbell Row"}),
+        WorkoutDay("Leg Day", {"Squats", "Lunges", "Leg Press"})
+    };
+
+    workoutPlans["Advanced"] = {
+        WorkoutDay("HIIT", {"Burpees", "Mountain Climbers", "Jump Squats"}),
+        WorkoutDay("Strength Max", {"Deadlift (5x5)", "Bench (5x5)", "Squat (5x5)"}),
+        WorkoutDay("Endurance Run", {"10K run", "Cooldown walk", "Stretching"})
+    };
+}
+
+// Prints the plan for a given level (Beginner, etc.)
+void WorkoutRecommender::recommendPlan(const string& level) const {
+    auto it = workoutPlans.find(level);
+    if (it == workoutPlans.end()) {
+        cout << setw(10) << "" << "Invalid level. Please enter Beginner, Intermediate, or Advanced.\n";
+        return;
+    }
+
+    cout << setw(10) << "" << "Workout Plan: " << level << "\n";
+    cout << setw(10) << "" << setfill('-') << setw(35) << "-" << setfill(' ') << "\n";
+
+    const vector<WorkoutDay>& plan = it->second;
+    for (size_t i = 0; i < plan.size(); ++i) {
+        plan[i].display(static_cast<int>(i) + 1);
+    }
+}
+
+// Main entry point with user input prompt
+void workoutReccomendation() {
+    WorkoutRecommender recommender;
+    string level;
+
+    cout << setw(10) << "" << "Enter level [Beginner / Intermediate / Advanced]: ";
+    cin >> level;
+
+    recommender.recommendPlan(level);
+}
