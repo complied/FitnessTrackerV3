@@ -1,36 +1,33 @@
-/*#ifndef DAYWORKOUTMANAGER_HPP
-#define DAYWORKOUTMANAGER_HPP
+#ifndef WORKOUT_ASSIGN_H
+#define WORKOUT_ASSIGN_H
 
-#include <iostream>
-#include <map> // helpfull for grouping all 3 Vecotors, string , shared pointer
-#include <vector> // space
-#include <memory> // pointers
-#include <string> // letters
+#include <string>
+#include <map>
 
 using namespace std;
 
+// encapsulating for priacy
+// Demonstrates: Classes & Objects, Encapsulation, and Composition
+class workoutAssign {
+private:
+    // Inner class to hold workout information
+    class WorkoutDetails {
+    public: //stored inside a nested class
+        string name;
+        string date;
+        int duration;
 
-//creating namespace for better usage in cpp and main
-namespace workoutManager {
-    struct workout{ //creating struct for better object management
-        string type; // workout type
-        double duration; // creating a duration for the workout
-
-        workout(const string &t, double d); // constructor - easier to use
+        WorkoutDetails() = default;
+        WorkoutDetails(const string& name, const string& date, int duration)
+            : name(name), date(date), duration(duration) {}
     };
 
-    // Map to organize workouts by day
-    // Key = day name ("Monday", "Tuesday", etc.)
-    // Value = list of workouts for that day using shared_ptr
-    extern map<string, vector<shared_ptr<workout>>> workoutManager;
+    // Map day (e.g., "Monday") to a specific workout
+    map<string, WorkoutDetails> schedule;
 
-
-    // conneting existing workouts to days!
-    void assignWorkoutToDay();
-}
-
-
-
+public:
+    // Collects workout info from user and prints the full plan
+    void assignWorkout();
+};
 
 #endif
-*/
