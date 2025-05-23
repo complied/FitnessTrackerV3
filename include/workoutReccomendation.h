@@ -1,37 +1,35 @@
-/*
-#ifndef Utils_wworkoutReccomendation
-#define Utils_wworkoutReccomendation
 
-// Included all the necesary libraries
-#include <iostream>
-#include <iomanip>
+#ifndef UTILS_WORKOUTRECOMMENDATION_H
+#define UTILS_WORKOUTRECOMMENDATION_H
+
 #include <string>
-#include <vector> // swapped from ararys to vector for better usauge
-#include <map> // using for .at - for picking difficulty
+#include <vector>
+#include <map>
 
 using namespace std;
 
-namespace workoutReccomendation {
+// Represents a single workout day with a name and list of exercises
+class WorkoutDay {
+private:
+    string name;
+    vector<string> exercises;
 
-    // now creating enum workout class for different workouts
+public:
+    WorkoutDay();
+    WorkoutDay(const string& name, const vector<string>& exercises);
+    void display(int dayNumber) const;
+};
 
-    enum class Difficulty{
-        Beginner =1,
-        Moderate = 2,
-        InterMediate = 3
+// Manages recommendation logic for workout plans
+class WorkoutRecommender {
+private:
+    map<string, vector<WorkoutDay>> workoutPlans;
 
-    };
+public:
+    WorkoutRecommender(); // Initializes default plans
+    void recommendPlan(const string& level) const;
+};
 
-    struct WorkoutDay {
-        string name;               // Workout day label
-        vector<string> exercises;  // Exercises for this day
-    };
-
-    void workoutReccomendation();
-
-}
-
-
-# endif
-
-*/
+// Entry point for user-driven recommendation flow
+void workoutReccomendation();
+#endif
