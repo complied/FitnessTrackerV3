@@ -5,6 +5,7 @@
 #include "DisplayMenu.h"
 #include "workoutLogger.h"
 #include "workoutReccomendation.h"  // updated workout reccomendator
+#include "workoutAssign.h"
 #include <iostream>
 #include <limits>
 #include <iomanip>
@@ -32,11 +33,16 @@ int main() {
         // Handle menu options
         switch (choice) {
             case 1:
-                log.logWorkout();
+                log.logWorkout();  // Logging workouts with calorie calculation
                 break;
             case 2:
-                workoutReccomendation();
+                workoutReccomendation();  // Show workout plan recommendation
                 break;
+            case 3: {
+                workoutAssign assigner;   // Declare inside scope to avoid jump error
+                assigner.assignWorkout(); // Let user assign their weekly routine
+                break;
+            }
             case 6:
                 cout << setw(10) << "" << "Goodbye!\n";
                 return 0;
