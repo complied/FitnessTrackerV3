@@ -1,50 +1,63 @@
-/*#include "../include/workoutAssign.h"  // allows the function
-#include "../include/workoutLogger.h" // Including workoutLogger to access activities and durations
+#include "workoutAssign.h"
+#include <iostream>
+#include <iomanip>
+#include <limits>
 
 using namespace std;
-using namespace logWorkout; // Access activities, durations globally
 
-namespace workoutManager {
-    map<string, vector<shared_ptr<workout>>> workoutManager;
+// Handles full flow: collect workouts, then print schedule
+void workoutAssign::assignWorkout() {
+    char repeat = 'y';
 
-    workout::workout(const string &t, double d) : type(t), duration(d) {} // workout constructor
+    while (tolower(repeat) == 'y') {
+        string day, name, date;
+        int duration;
 
-    void assignWorkoutToDay() {
-        for (int i = 0; i < activities.size(); i++) { // switching through each workout
-            string day;
+        // Get user input for the assignment
+        cout << setw(10) << "" << "Enter day (Eg: Monday): ";
+        cin >> day;
+        cin.ignore();
 
-            // assigning workout activity to selected day
-            cout << setw(10) << "" << "Please Enter a day you want to assign the workout: [ " << activities[i] << " ] ";
-            cin >> day;
+        cout << setw(10) << "" << "Enter workout name: ";
+        getline(cin, name);
 
-            if (workoutManager[day].size() >= 5) { // limiting maximum to 5
-                cout << setw(10) << "" << "Day is full! Cannot assign more workouts to " << day << ".\n";
-                continue;
-            }
+        cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
+        getline(cin, date);
 
-            // Creating a shared_ptr pointing to a new Workout object
-            shared_ptr<workout> workoutPtr = make_shared<workout>(activities[i], durations[i]);
+        cout << setw(10) << "" << "Enter duration in minutes: ";
+        cin >> duration;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            // Add the workout pointer to the selected day's vector inside the map
-            workoutManager[day].push_back(workoutPtr);
-
-            cout << setw(10) << "" << "Perfect! Your Workout [" << activities[i] << "] has been assigned to: " << day << "\n";
-        }
-
-        // displaying the whole workout map
-        cout << "\n" << setw(10) << "" << "Workout Assignment Schedule:\n";
-
-        if (workoutManager.empty()) {
-            cout << setw(10) << "" << "No workouts have been assigned yet.\n";
+        // Prevent duplicate assignment
+        if (schedule.find(day) != schedule.end()) {
+            cout << setw(10) << "" << "Workout already assigned for " << day << ". Try another day.\n";
         } else {
-            for (const auto& pair : workoutManager) {
-                cout << setw(10) << "" << pair.first << ":\n";
-                for (const auto& workoutPtr : pair.second) {
-                    cout << setw(15) << "" << "- " << workoutPtr->type << " (" << workoutPtr->duration << " min)\n";
-                }
-            }
+            // Assign workout info to the map for that day
+            WorkoutDetails details;
+            details.name = name;
+            details.date = date;
+            details.duration = duration;
+            schedule[day] = details;
+
+            cout << setw(10) << "" << "Workout assigned to " << day << " successfully.\n";
         }
+
+        cout << setw(10) << "" << "Assign another workout? (y/n): ";
+        cin >> repeat;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
+    // Final schedule output
+    cout << "\n" << setw(10) << "" << "--- Weekly Workout Plan ---\n";
+    if (schedule.empty()) {
+        cout << setw(10) << "" << "No workouts assigned.\n";
+    } else {
+        for (const auto& entry : schedule) {
+            const string& day = entry.first;
+            const WorkoutDetails& w = entry.second;
+            cout << setw(10) << "" << day << ": "
+                 << w.name << " | " << w.date << " | "
+                 << w.duration << " min\n";
+        }
+    }
 }
-*/
