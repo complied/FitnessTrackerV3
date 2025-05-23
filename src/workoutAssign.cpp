@@ -2,8 +2,30 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <stdexcept> // For std::invalid_argument
 
 using namespace std;
+
+// Helper function to validate YYYY-MM-DD format
+bool isValidDate(const string& date) {
+    if (date.length() != 10 || date[4] != '-' || date[7] != '-') return false;
+
+    string year = date.substr(0, 4);
+    string month = date.substr(5, 2);
+    string day = date.substr(8, 2);
+
+    for (char ch : year + month + day) {
+        if (!isdigit(ch)) return false;
+    }
+
+    int y = stoi(year);
+    int m = stoi(month);
+    int d = stoi(day);
+
+    if (y > 2026 || m < 1 || m > 12 || d < 1 || d > 31) return false;
+
+    return true;
+}
 
 // Handles full flow: collect workouts, then print schedule
 void workoutAssign::assignWorkout() {
@@ -21,12 +43,38 @@ void workoutAssign::assignWorkout() {
         cout << setw(10) << "" << "Enter workout name: ";
         getline(cin, name);
 
-        cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
-        getline(cin, date);
+        // Handle date input with exception for invalid format
+        while (true) {
+            try {
+                cout << setw(10) << "" << "Enter date (YYYY-MM-DD): ";
+                getline(cin, date);
+                if (!isValidDate(date)) {
+                    throw invalid_argument("Date must be in format YYYY-MM-DD and realistic");
+                }
+                break;
+            } catch (const invalid_argument& e) {
+                cout << setw(10) << "" << "Error: " << e.what() << "\n";
+            }
+        }
 
-        cout << setw(10) << "" << "Enter duration in minutes: ";
-        cin >> duration;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        // Handle duration input and validate with exception
+        while (true) {
+            try {
+                cout << setw(10) << "" << "Enter duration in minutes: ";
+                cin >> duration;
+
+                if (cin.fail() || duration <= 0) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    throw invalid_argument("Duration must be a positive number");
+                }
+
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                break;
+            } catch (const invalid_argument& e) {
+                cout << setw(10) << "" << "Error: " << e.what() << "\n";
+            }
+        }
 
         // Prevent duplicate assignment
         if (schedule.find(day) != schedule.end()) {
