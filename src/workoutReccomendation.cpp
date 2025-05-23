@@ -81,9 +81,19 @@ void workoutReccomendation() {
     cout << setw(10) << "" << "Enter level [Beginner / Intermediate / Advanced]: ";
     cin >> level;
 
+    // clear input stream in case junk follows (e.g., "Beginner123")
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     try {
+        // If user typed nothing or just a number, this will throw
+        if (level.empty() || isdigit(level[0])) {
+            throw invalid_argument("Invalid input. Please enter a valid level.");
+        }
+
+        // Try to recommend the workout plan
         recommender.recommendPlan(level);
-    } catch (const invalid_argument& e) {
+    }
+    catch (const invalid_argument& e) {
         cout << setw(10) << "" << "Error: " << e.what() << "\n";
     }
 }
