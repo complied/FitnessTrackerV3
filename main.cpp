@@ -4,7 +4,7 @@
 
 #include "DisplayMenu.h"
 #include "workoutLogger.h"
-#include "workOut.h"
+#include "workoutReccomendation.h"  // updated workout reccomendator
 #include <iostream>
 #include <limits>
 #include <iomanip>
@@ -12,16 +12,16 @@
 using namespace std;
 
 int main() {
-    WorkoutLog log;  //updated logging system
+    WorkoutLog log;
     int choice;
 
     while (true) {
-
         DisplayMenu menu;
         menu.showMainMenu();
+
         cin >> choice;
 
-        // User Handling
+        // Validate user input
         if (cin.fail()) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -29,9 +29,13 @@ int main() {
             continue;
         }
 
+        // Handle menu options
         switch (choice) {
             case 1:
-                log.logWorkout(); //testing logging system
+                log.logWorkout();
+                break;
+            case 2:
+                workoutReccomendation();
                 break;
             case 6:
                 cout << setw(10) << "" << "Goodbye!\n";
@@ -40,6 +44,7 @@ int main() {
                 cout << setw(10) << "" << "Invalid option. Please try again.\n";
         }
 
+        // Wait for user before looping again
         cout << setw(10) << "" << "Press Enter to return to main menu...";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cin.get();
