@@ -17,6 +17,7 @@ add_executable(FitnessTrackerV3
         src/Running.cpp
         src/Biking.cpp
         src/Swimming.cpp
+        src/workOut.cpp
 )
 
 target_include_directories(FitnessTrackerV3 PRIVATE
@@ -40,6 +41,7 @@ add_executable(FitnessTrackerTests
         src/Running.cpp
         src/Biking.cpp
         src/Swimming.cpp
+        src/workOut.cpp
 )
 
 target_include_directories(FitnessTrackerTests PRIVATE
