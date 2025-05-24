@@ -12,11 +12,11 @@ public:
 
     Workout() = default; // setting a default constructor
 
-    Workout(const string& name, const string& date, int duration)
-        : name(name), date(date), duration(duration) {}
+    // Constructor moved to .cpp file
+    Workout(const string& name, const string& date, int duration);
 
     // Virtual destructor - cleaner for pointers
-    virtual ~Workout() = default;
+    virtual ~Workout();
 
     // Displays the workout info (based on the other sub classes though)
     virtual void show() const = 0;
