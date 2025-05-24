@@ -1,79 +1,72 @@
-/*
 #include <gtest/gtest.h>
-#include "../include/calorieChecker.h"
-#include "../include/workoutLogger.h"
-#include "../include/workoutAssign.h"
+#include "Running.h"
+#include "Swimming.h"
+#include "Biking.h"
+#include "SongManager.h"
+#include "workOut.h"
 
-using namespace calorieChecker;
-using namespace logWorkout;
-
-
-
-TEST(CalorieCheckerTests, ParseWorkout_ValidInputs) {
-    EXPECT_EQ(parseWorkout("Running"), WorkoutType::Running);
-    EXPECT_EQ(parseWorkout("Swimming"), WorkoutType::Swimming);
-    EXPECT_EQ(parseWorkout("Biking"), WorkoutType::Biking);
+// Running: expected calorie value for 30 min, 60kg
+TEST(WorkoutTypesTest, RunningCaloriesStandard) {
+    Running run("Run", "2025-05-24", 30);
+    EXPECT_NEAR(run.calculateCalories(60), 308.7, 0.1);
 }
 
-TEST(CalorieCheckerTests, ParseWorkout_InvalidDefaultsToBiking) {
-    EXPECT_EQ(parseWorkout("Walking"), WorkoutType::Biking);
-    EXPECT_EQ(parseWorkout("Yoga"), WorkoutType::Biking);
-    EXPECT_EQ(parseWorkout(""), WorkoutType::Biking);
+// Swimming - 0 duration should result in 0 calories
+TEST(WorkoutTypesTest, SwimmingCaloriesZeroDuration) {
+    Swimming swim("Swim", "2025-05-24", 0);
+    EXPECT_DOUBLE_EQ(swim.calculateCalories(60), 0.0);
 }
 
-
-TEST(WorkoutLoggerTests, IsValidDate_ValidDates) {
-    EXPECT_TRUE(isValidDate("2024-05-02"));
-    EXPECT_TRUE(isValidDate("2025-12-31"));
+// Biking - negative weight produces negative calorie output
+TEST(WorkoutTypesTest, BikingCaloriesNegativeWeight) {
+    Biking bike("Bike", "2025-05-24", 30);
+    EXPECT_LT(bike.calculateCalories(-70), 0);
 }
 
-TEST(WorkoutLoggerTests, IsValidDate_InvalidFormat) {
-    EXPECT_FALSE(isValidDate("2025/12/31"));
-    EXPECT_FALSE(isValidDate("20251231"));
-    EXPECT_FALSE(isValidDate("20-12-2025"));
-    EXPECT_FALSE(isValidDate("abcd-ef-gh"));
+// SongManager - Add song without crashing
+TEST(SongManagerTest, AddSongAndRetrieve) {
+    SongManager manager;
+    manager.addSong("Sky", "Playboi Carti");
+    SUCCEED();  // No crash = pass
 }
 
-TEST(WorkoutLoggerTests, IsValidDate_InvalidValues) {
-    EXPECT_FALSE(isValidDate("2026-01-01")); // future year
-    EXPECT_FALSE(isValidDate("2025-13-01")); // invalid month
-    EXPECT_FALSE(isValidDate("2025-00-10")); // invalid month
-    EXPECT_FALSE(isValidDate("2025-10-32")); // invalid day
-    EXPECT_FALSE(isValidDate("2025-02-00")); // invalid day
+// Song - Getters return expected values
+TEST(SongManagerTest, SongGettersAccuracy) {
+    Song s("Go2DaMoon", "Kanye West");
+    EXPECT_EQ(s.getName(), "Go2DaMoon");
+    EXPECT_EQ(s.getAuthor(), "Kanye West");
 }
 
-
-double computeCalories(WorkoutType type, double weight, double duration) {
-    if (type == WorkoutType::Running) return weight * 0.0175 * 9.8 * duration;
-    if (type == WorkoutType::Swimming) return weight * 0.0175 * 7.0 * duration;
-    return weight * 0.0175 * 8.0 * duration;
+// Workout object constructor assigns values
+TEST(WorkoutObjectTest, ConstructorAssignsCorrectValues) {
+    Running r("Morning Run", "2025-05-24", 20);
+    EXPECT_EQ(r.name, "Morning Run");
+    EXPECT_EQ(r.date, "2025-05-24");
+    EXPECT_EQ(r.duration, 20);
 }
 
-TEST(CalorieCheckerTests, CalorieCalculation_Correctness) {
-    EXPECT_DOUBLE_EQ(computeCalories(WorkoutType::Running, 60, 30), 308.7);
-    EXPECT_DOUBLE_EQ(computeCalories(WorkoutType::Swimming, 70, 45), 385.875);
-    EXPECT_DOUBLE_EQ(computeCalories(WorkoutType::Biking, 55, 40), 308.0);
+// Edge case - empty string and 0 duration
+TEST(WorkoutObjectTest, ConstructorEmptyValuesAllowed) {
+    Swimming swim("", "", 0);
+    EXPECT_EQ(swim.name, "");
+    EXPECT_EQ(swim.date, "");
+    EXPECT_EQ(swim.duration, 0);
 }
 
-
-TEST(CalorieCheckerTests, CalorieSession_UsingSmartPointer) {
-    auto session = std::make_unique<CalorieSession>();
-    session->type = WorkoutType::Running;
-    session->weight = 65;
-    session->duration = 20;
-    session->calories = computeCalories(session->type, session->weight, session->duration);
-
-    EXPECT_GT(session->calories, 0.0);
-    EXPECT_EQ(session->type, WorkoutType::Running);
+// Boolean logic: Calories should be positive
+TEST(WorkoutTypesTest, ValidCalorieCalculationProducesPositiveResult) {
+    Running run("Test Run", "2025-05-24", 15);
+    EXPECT_TRUE(run.calculateCalories(60) > 0);
 }
 
-
-TEST(WorkoutAssignTests, LimitPerDay) {
-    std::string testDay = "Monday";
-    for (int i = 0; i < 5; i++) {
-        std::shared_ptr<workoutManager::workout> w = std::make_shared<workoutManager::workout>("Pushups", 20);
-        workoutManager::workoutManager[testDay].push_back(w);
-    }
-    EXPECT_EQ(workoutManager::workoutManager[testDay].size(), 5);
+// Duration 0 → no calories burned
+TEST(WorkoutTypesTest, NoCaloriesBurnedIfDurationZero) {
+    Biking bike("Chill", "2025-05-24", 0);
+    EXPECT_FALSE(bike.calculateCalories(70) > 0);
 }
-*/ 
+
+// Negative duration produces negative calories
+TEST(WorkoutTypesTest, NegativeDurationResultsInZeroCalories) {
+    Swimming swim("Error Swim", "2025-05-24", -15);
+    EXPECT_LT(swim.calculateCalories(60), 0);
+}

@@ -40,9 +40,10 @@ A terminal-based C++ program that helps users track workouts, calculate calories
   - Adheres to clean modular design principles
 
 + **GoogleTest Integration**
-  - GoogleTest integrated via `CMakeLists.txt`
-  - 
-  - 
+  - GoogleTest integrated via `CMakeLists.txt` using `gtest_discover_tests()`
+  - Tests key features like calorie calculations, workout construction, and song metadata
+  - Uses assertions like `EXPECT_EQ`, `EXPECT_TRUE`, and `EXPECT_NEAR`
+  - All tests pass and are organized in a single modular test file
 
 + **Bug Fixes + Clean Refactors**
   - Fixed constructor call logic for Workout-derived classes
@@ -93,8 +94,20 @@ A terminal-based C++ program that helps users track workouts, calculate calories
 + YouTube Video (V1): https://www.youtube.com/watch?v=IcDLU2BOBRM
 + GitHub V1 Repo: https://github.com/complied/FitnessTracker
 + V2 Demo (Google Drive): https://drive.google.com/drive/u/0/folders/1oEat0s--AFmA0revnO6Cva3JIh2uH4mm
++ V3 Demo (Google Drive): https://drive.google.com/drive/u/0/folders/1udJk_Lcdud6wR-DeXRxGr1ro0jXRwJOS
 
 ---
+
+## Running Tests
+
+This project uses GoogleTest for unit testing. To build and run the tests:
+
+```bash
+# From the project root
+cmake -S . -B build
+cmake --build build
+./build/FitnessTrackerTests
+
 
 ## Some Sources Used to Complete This Project
 
