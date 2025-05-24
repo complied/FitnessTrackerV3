@@ -136,12 +136,12 @@ void SongManager::run() {
     }
 
     // Save to specific data folder with consistent naming
-    saveToCSV("data/emergency_session.csv");
-    saveToBinary("data/emergency_session.dat");
+    saveToCSV("../data/emergency_session.csv");
+    saveToBinary("../data/emergency_session.dat");
 
     // Show everything stored in files
     cout << "\n";
-    displayFromCSV("data/emergency_session.csv");
+    displayFromCSV("../data/emergency_session.csv");
     cout << "\n";
-    displayFromBinary("data/emergency_session.dat");
+    displayFromBinary("../data/emergency_session.dat");
 }
