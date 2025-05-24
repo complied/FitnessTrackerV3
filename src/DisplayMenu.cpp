@@ -17,7 +17,7 @@ void DisplayMenu::showMainMenu() const {
     cout << setw(5) << "" << "1) Log Workout + Calorie Calculator" << endl; // merged both functions for better personality
     cout << setw(5) << "" << "2) Workout Recommendation" << endl;
     cout << setw(5) << "" << "3) Routine Assigner" << endl;
-    cout << setw(5) << "" << "4) Save and Read Workout Data" << endl;
+    cout << setw(5) << "" << "4) Playlist Creator + File Saving" << endl;
     cout << setw(5) << "" << "5) Exit" << endl;
 
     cout << setfill('-') << setw(width) << "-" << endl << endl;
