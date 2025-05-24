@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <limits>
+#include <stdexcept>
 
 using namespace std;
 
@@ -29,47 +31,47 @@ void SongManager::addSong(const string& name, const string& author) {
 // Save all added songs to a CSV file like a spreadsheet
 void SongManager::saveToCSV(const string& filename) const {
     ofstream outFile(filename, ios::app);  // open file in append mode
-    if (outFile.is_open()) {
-        if (outFile.tellp() == 0) {  // if file is empty, add header
-            outFile << "Song Name,Author\n";
-        }
-
-        for (int i = 0; i < playlist.size(); i++) {
-            outFile << playlist[i].getName() << "," << playlist[i].getAuthor() << "\n";
-        }
-
-        outFile.close();
-        cout << setw(10) << "" << "Songs saved to CSV file.\n";
-    } else {
-        cout << setw(10) << "" << "Failed to open CSV file.\n";
+    if (!outFile.is_open()) {
+        throw runtime_error("Failed to open CSV file.");
     }
+
+    if (outFile.tellp() == 0) {  // if file is empty, add header
+        outFile << "Song Name,Author\n";
+    }
+
+    for (int i = 0; i < playlist.size(); i++) {
+        outFile << playlist[i].getName() << "," << playlist[i].getAuthor() << "\n";
+    }
+
+    outFile.close();
+    cout << setw(10) << "" << "Songs saved to CSV file.\n";
 }
 
 // Save songs to a binary file that stores each record as bytes
 void SongManager::saveToBinary(const string& filename) const {
     ofstream binFile(filename, ios::binary | ios::app);  // open file in append mode
-    if (binFile.is_open()) {
-        for (int i = 0; i < playlist.size(); i++) {
-            string name = playlist[i].getName();
-            string author = playlist[i].getAuthor();
-
-            int nameLen = name.length();
-            int authorLen = author.length();
-
-            // Write song name length and then the content
-            binFile.write((char*)&nameLen, sizeof(int));
-            binFile.write(name.data(), nameLen);  // write name content
-
-            // Write author name length and then the content
-            binFile.write((char*)&authorLen, sizeof(int));
-            binFile.write(author.data(), authorLen);  // write author content
-        }
-
-        binFile.close();
-        cout << setw(10) << "" << "Songs saved to binary file.\n";
-    } else {
-        cout << setw(10) << "" << "Failed to open binary file.\n";
+    if (!binFile.is_open()) {
+        throw runtime_error("Failed to open binary file.");
     }
+
+    for (int i = 0; i < playlist.size(); i++) {
+        string name = playlist[i].getName();
+        string author = playlist[i].getAuthor();
+
+        int nameLen = name.length();
+        int authorLen = author.length();
+
+        // Write song name length and then the content
+        binFile.write((char*)&nameLen, sizeof(int));
+        binFile.write(name.data(), nameLen);  // write name content
+
+        // Write author name length and then the content
+        binFile.write((char*)&authorLen, sizeof(int));
+        binFile.write(author.data(), authorLen);  // write author content
+    }
+
+    binFile.close();
+    cout << setw(10) << "" << "Songs saved to binary file.\n";
 }
 
 // Read songs back from the CSV and show them in terminal
@@ -118,30 +120,49 @@ void SongManager::displayFromBinary(const string& filename) const {
 
 // Complete flow - now asks user for songs and saves to both files
 void SongManager::run() {
-    char again = 'y';
-    string name, author;
+    try {
+        char again = 'y';
+        string name, author;
 
-    while (tolower(again) == 'y') {
-        cout << setw(10) << "" << "Enter song name: ";
-        cin.ignore();  // clear any previous leftover newline
-        getline(cin, name);
+        while (tolower(again) == 'y') {
+            cout << setw(10) << "" << "Enter song name: ";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // clear any previous leftover newline
+            getline(cin, name);
 
-        cout << setw(10) << "" << "Enter author name: ";
-        getline(cin, author);
+            if (name.empty()) {
+                throw invalid_argument("Song name cannot be empty.");
+            }
 
-        addSong(name, author);
+            cout << setw(10) << "" << "Enter author name: ";
+            getline(cin, author);
 
-        cout << setw(10) << "" << "Add another song? (y/n): ";
-        cin >> again;
+            if (author.empty()) {
+                throw invalid_argument("Author name cannot be empty.");
+            }
+
+            addSong(name, author);
+
+            cout << setw(10) << "" << "Add another song? (y/n): ";
+            cin >> again;
+
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                throw runtime_error("Invalid input for continue prompt.");
+            }
+        }
+
+        // Save to specific data folder with consistent naming
+        saveToCSV("../data/emergency_session.csv");
+        saveToBinary("../data/emergency_session.dat");
+
+        // Show everything stored in files
+        cout << "\n";
+        displayFromCSV("../data/emergency_session.csv");
+        cout << "\n";
+        displayFromBinary("../data/emergency_session.dat");
+
+    } catch (const exception& e) {
+        cerr << setw(10) << "" << "[Error] " << e.what() << "\n";
     }
-
-    // Save to specific data folder with consistent naming
-    saveToCSV("../data/emergency_session.csv");
-    saveToBinary("../data/emergency_session.dat");
-
-    // Show everything stored in files
-    cout << "\n";
-    displayFromCSV("../data/emergency_session.csv");
-    cout << "\n";
-    displayFromBinary("../data/emergency_session.dat");
 }
