@@ -1,131 +1,97 @@
-# V2 STARTED FROM VERSION 0.5
+# V3 STARTED FROM VERSION 0.11
 
 # Fitness Tracker
 
 ## Overview
-A simple C++ program that helps users log workouts, get workout recommendations, assign routines, and calculate calories burned based on activity type.
+A terminal-based C++ program that helps users track workouts, calculate calories, assign routines, receive weekly fitness plans, and now build a personal music playlist. Version 3 is a complete Object-Oriented Programming (OOP) upgrade, transforming the procedural code of Project 2 into a modular and extensible system using classes, abstraction, encapsulation, inheritance, and polymorphism.
 
 ## Features
-+ Log workout activity, date, and duration
-    - Full input validation (activity name, date format YYYY-MM-DD, duration > 0)
-    - Uses unordered_map and multimap to organize data and sort leaderboard by duration
 
-+ Get personalized workout recommendations based on fitness level
-    - Beginner (3-day), Moderate (4-day), Intermediate (6-day)
-    - Mapped with structured plans using enums, maps, and vectors
++ **Log workout activity with calorie calculation**
+  - Merged functionality: User logs activity + calculates calories in one flow
+  - Includes date, workout name, and duration
+  - Uses virtual functions via base class `Workout` with derived classes: `Running`, `Swimming`, and `Biking`
+  - MET-based calorie calculation with formatted output
+  - Clean memory management using `shared_ptr`
 
-+ Assign logged workouts to days of the week
-    - Integrates with workoutLogger
-    - Uses shared_ptr and map<string, vector<shared_ptr<workout>>> for clean assignment
-    - Limit: Max 5 workouts per day
++ **Get OOP-Based Workout Recommendations**
+  - User chooses Beginner (3-day), Moderate (4-day), or Intermediate (6-day) plan
+  - Uses `enum class` for difficulty levels and maps each to a full week plan
+  - Fully refactored to class-based design with modular suggestions
 
-+ Calculate calories burned
-    - Based on MET values for Running, Swimming, and Biking
-    - Requires weight and duration inputs
-    - Accurate calculations with formatted output
++ **Assign Weekly Routines**
+  - Users assign their own custom workouts to weekdays
+  - Internally uses a class `workoutAssign` with private data map
+  - Follows single-class architecture (removed use structs)
+  - Validates and stores each entry (day, workout name, date, duration)
+  - Demonstrates encapsulation and clean map-based printing
 
-+ Emergency session logging
-    - Save workouts into .csv and binary files
-    - Supports urgent calorie tracking use case
++ **Playlist Creator (NEW in V3)**
+  - Lets users add songs (title and author)
+  - Saves data to CSV and Binary files: `../data/songLibrary.csv` and `../data/songLibrary.dat`
+  - Appends rather than overwrites files
+  - Uses `ofstream` and `ifstream` streams to store and read playlist data
+  - Reads back entries and shows them in terminal after writing
+  - Encapsulated within `SongManager` and `Song` classes
 
-+ View emergency session logs
-    - Displays all logged binary sessions in formatted output
-    - Error handling for file read/write issues
++ **Formatted UI + Modular Design**
+  - `setw`, `setfill`, and terminal padding used for clean output
+  - Each logical unit split into separate `.cpp` and `.hpp` files
+  - Adheres to clean modular design principles
 
-+ Organized modular structure
-    - Each component in its own namespace and file
-    - Uses enums, structs, STL containers
++ **GoogleTest Integration**
+  - GoogleTest integrated via `CMakeLists.txt`
+  - 
+  - 
 
-+ Unit Tested with GoogleTest
-    - Core functions like parseWorkout and isValidDate tested
-    - Compile and run via CMake or CLion
-
-+ Formatted UI
-    - setfill, setw, and spacing used to align terminal output
-
-+ Bug Fixes with visual proof:
-    - Before (Workout skipped, input broken): https://imgur.com/a/4EvP0jg
-    - After (Clean input, structured logging): https://imgur.com/a/vvwaKLP
-
----
++ **Bug Fixes + Clean Refactors**
+  - Fixed constructor call logic for Workout-derived classes
+  - Addressed input validation (especially duration, dates)
+  - Fixed scope jump bugs in `main.cpp` by wrapping block-scoped variables
+  - Removed legacy calorieChecker.cpp (now fully handled by WorkoutLog)
+  - Cleaned up whitespace, switched to clear formatting
 
 ## Version History
 
-### V - 0.1
-+ Added a Display function with error handling
-+ Proper display with `<iomanip>` library implementation
+### V - 0.11
++ Refactored `WorkoutLogger` and calorie calculator into a single class `WorkoutLog`
++ Combined logging and MET-based calorie burn into one cohesive feature
++ Added class hierarchy: abstract base class `Workout` and derived types `Running`, `Swimming`, `Biking`
 
-### V - 0.2
-+ New Feature: Calorie Calculator to estimate calories burned based on weight, workout type, and duration
-+ Supports Running, Swimming, Biking with specific MET values
-+ User-friendly formatted output with input error handling
-+ Updated Menu for better flexibility
+### V - 0.12
++ Refactored WorkoutRecommendation module using enum class `Difficulty`
++ Used `unordered_map<string, vector<string>>` to structure daily plans
++ Ensured plan integrity, consistent output formatting, and clean logic
 
-### V - 0.3
-+ Enhanced CalorieChecker with strong input validation (cin.fail, cin.ignore)
-+ Removed old Fitness.cpp/Fitness.hpp files
-+ Separated functionality into modular .cpp and .hpp files
-+ New Feature: WorkoutRecommendation (Beginner/Moderate/Intermediate plans)
+### V - 0.13
++ Rebuilt RoutineAssigner using OOP design (no struct, no tuple, no 2-class split)
++ Assigns workouts to weekdays with name, date, and duration
++ Demonstrated encapsulation by using internal class to manage all data
++ Displays final schedule after all inputs
 
-### V - 0.4
-+ Created WorkoutLogger
-    - Logs up to 15 workouts using arrays (activity + duration)
-    - Added support for y/n inputs to continue or stop logging
-+ Improved input handling with getline and cin.ignore
-+ Updated main loop to prevent accidental exits
-+ Added menu option 4 to exit cleanly
+### V - 0.14
++ Added input validation and exception handling to RoutineAssigner
++ Implemented `isValidDate()` function for verifying YYYY-MM-DD format
++ Used try/catch blocks to handle incorrect date inputs
 
-### V - 0.5.5
-+ Implemented AssignWorkoutDay function
-    - Connects to global arrays from WorkoutLogger
-    - Assigns workouts to days using shared_ptr in a map
-    - Limit: Max 5 workouts per day
-+ Fixed white space bug
-    - Missing break in switch-case fixed
-    - cin.ignore adjusted only when workoutCount == 0
+### V - 0.15
++ Introduced Playlist Creator feature (`SongManager.cpp`, `Song.cpp`)
++ Allows users to store song name + author
++ Stores song data in both `.csv` and `.dat` formats
++ Uses binary serialization with raw byte writing and reading
 
-### V - 0.6
-+ Rebuilt WorkoutRecommendation
-    - Replaced 2D arrays with maps and vectors
-    - Structured using enums and structs
-    - Added user-selectable difficulty levels
-
-### V - 0.7
-+ Rebuilt WorkoutLogger
-    - Replaced arrays with vectors and unordered_map
-    - Leaderboard logic switched from std::sort to multimap
-+ Improved validation for activity, duration, and date
-    - Ensures input is valid and date is pre-2026
-
-### V - 0.8
-+ Connected Workout Assign with Workout Logger
-    - Assign workouts with date/duration to specific weekdays
-    - Used shared_ptr and safe memory handling
-+ Cleaned up main logic and whitespace bugs
-
-### V - 0.9
-+ Fixed File Manager
-    - Now reads binary logs saved from WorkoutLogger
-    - Clean session display on terminal
-    - Struct alignment fixed for read/write consistency
-    - Added file error handling for robustness
-
-### V - 10.0
-+ Added GoogleTest support for unit testing
-
-  How to run?
-    1. Build the test target:
-       `$ cmake --build . --target test_main`
-    2. Run the tests:
-       `$ ./test_main`
-    3. View results in terminal (pass/fail)
+### V - 0.16
++ Added user interaction and storage logic to `SongManager::run()`
++ Automatically saves files under `data/songLibrary.csv` and `data/songLibrary.dat`
++ Fixed issues with file handling and default constructor errors
++ Fully integrated playlist option into main menu flow (case 4)
 
 ---
 
 ## Demo Links
 
 + YouTube Video (V1): https://www.youtube.com/watch?v=IcDLU2BOBRM
-+ Link to V1 GitHub Repo: https://github.com/complied/FitnessTracker
++ GitHub V1 Repo: https://github.com/complied/FitnessTracker
 + V2 Demo (Google Drive): https://drive.google.com/drive/u/0/folders/1oEat0s--AFmA0revnO6Cva3JIh2uH4mm
 
 ---
@@ -133,9 +99,7 @@ A simple C++ program that helps users log workouts, get workout recommendations,
 ## Some Sources Used to Complete This Project
 
 + https://www.geeksforgeeks.org/
-+ https://stackoverflow.com/
 + https://cplusplus.com/doc/
-+ https://devdocs.io/cpp/
-+ https://en.cppreference.com/w/
++ https://en.cppreference.com/
 + https://www.learncpp.com/
 + https://www.instituteoflifestylemedicine.org/wp-content/uploads/2015/04/METValues.pdf  (MET PDF)
