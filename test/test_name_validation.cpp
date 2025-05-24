@@ -59,7 +59,7 @@ TEST(WorkoutTypesTest, ValidCalorieCalculationProducesPositiveResult) {
     EXPECT_TRUE(run.calculateCalories(60) > 0);
 }
 
-// Duration 0 → no calories burned
+// Duration 0 - no calories burned
 TEST(WorkoutTypesTest, NoCaloriesBurnedIfDurationZero) {
     Biking bike("Chill", "2025-05-24", 0);
     EXPECT_FALSE(bike.calculateCalories(70) > 0);
