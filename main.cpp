@@ -49,8 +49,8 @@ int main() {
                 songApp.run();            // User inputs song info and stores it
                 break;
             }
-            case 6:
-                cout << setw(10) << "" << "Goodbye!\n";
+            case 5:
+                cout << setw(10) << "" << "Thanks for using our program! Goodbye!\n";
                 return 0;
             default:
                 cout << setw(10) << "" << "Invalid option. Please try again.\n";
