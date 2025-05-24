@@ -31,14 +31,16 @@ bool isValidDate(const string& date) {
 void workoutAssign::assignWorkout() {
     char repeat = 'y';
 
+    // Flush leftover newline from previous input (main menu selection)
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     while (tolower(repeat) == 'y') {
         string day, name, date;
         int duration;
 
         // Get user input for the assignment
         cout << setw(10) << "" << "Enter day (Eg: Monday): ";
-        cin >> day;
-        cin.ignore();
+        getline(cin, day);  // changed from cin >> day to getline to handle spaces
 
         cout << setw(10) << "" << "Enter workout name: ";
         getline(cin, name);
