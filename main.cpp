@@ -6,6 +6,7 @@
 #include "workoutLogger.h"
 #include "workoutReccomendation.h"  // updated workout reccomendator
 #include "workoutAssign.h"
+#include "SongManager.h"            //  song manager
 #include <iostream>
 #include <limits>
 #include <iomanip>
@@ -41,6 +42,11 @@ int main() {
             case 3: {
                 workoutAssign assigner;   // Declare inside scope to avoid jump error
                 assigner.assignWorkout(); // Let user assign their weekly routine
+                break;
+            }
+            case 4: {
+                SongManager songApp;      // SongManager integration
+                songApp.run();            // User inputs song info and stores it
                 break;
             }
             case 6:
